@@ -1,6 +1,8 @@
 class SessionHelper:
     def __init__(self, app):
         self.app = app
+        self.manage_project_page = "/mantisbt-1.2.20/manage_proj_page.php"
+        self.manage_page = "/mantisbt-1.2.20/manage_overview_page.php"
     def login(self, username, password):
         wd = self.app.wd
         self.app.open_view_page()
@@ -40,7 +42,7 @@ class SessionHelper:
         return wd.current_url.endswith(url)
     def open_manage_page(self):
         wd = self.app.wd
-        if self.is_on_page("/mantisbt-1.2.20/manage_overview_page.php") is \
+        if self.is_on_page(self.manage_page) is False: \
                 False:
             wd.find_element_by_css_selector("a["
                                             "href='/mantisbt-1.2.20/manage_overview_page.php']").click()
@@ -48,6 +50,6 @@ class SessionHelper:
     def open_manage_project_page(self):
         wd = self.app.wd
         self.open_manage_page()
-        if self.is_on_page("/mantisbt-1.2.20/manage_proj_page.php") is False:
+        if self.is_on_page(self.manage_project_page) is False:
             wd.find_element_by_css_selector("a["
                                             "href='/mantisbt-1.2.20/manage_proj_page.php']").click()
