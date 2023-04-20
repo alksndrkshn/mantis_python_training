@@ -42,8 +42,7 @@ class SessionHelper:
         return wd.current_url.endswith(url)
     def open_manage_page(self):
         wd = self.app.wd
-        if self.is_on_page(self.manage_page) is False: \
-                False:
+        if self.is_on_page(self.manage_page) is False:
             wd.find_element_by_css_selector("a["
                                             "href='/mantisbt-1.2.20/manage_overview_page.php']").click()
 
