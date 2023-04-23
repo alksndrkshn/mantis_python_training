@@ -8,15 +8,17 @@ class ProjectHelper:
     def __init__(self, app):
         self.app = app
 
+    def open_project_page(self):
+        wd = self.app.wd
+        wd.find_element_by_link_text("Manage").click()
+        wd.find_element_by_link_text("Manage Projects").click()
+
     def create(self, project):
         wd = self.app.wd
-        self.app.session.open_manage_project_page()
-        # init project creation
-        wd.find_element_by_css_selector("input[value='Create New Project']").click()
-        # fill group form
+        self.open_project_page()
+        wd.find_element_by_xpath("//input[@value='Create New Project']").click()
         self.fill_project_form(project)
-        # submit group creation
-        wd.find_element_by_css_selector("td input.button").click()
+        wd.find_element_by_xpath("//input[@value='Add Project']").click()
         self.project_cache = None
 
     def fill_project_form(self, project):
@@ -40,15 +42,12 @@ class ProjectHelper:
             Select(wd.find_element_by_name(list_name)).select_by_visible_text(
                 value)
 
-    def delete_project_by_name(self, name):
+    def delete_project_by_name(self, project):
         wd = self.app.wd
-        self.app.session.open_manage_project_page()
-        wd.find_element_by_xpath("//a[contains(text(),'%s')]" % name).click()
-        wd.find_element_by_css_selector("input[value='Delete "
-                                        "Project']").click()
-        wd.find_element_by_css_selector("input[value='Delete "
-                                        "Project']").click()
-        self.app.session.open_manage_project_page()
+        self.open_project_page()
+        wd.find_element_by_xpath("//a[text()='%s']" % project.name).click()
+        wd.find_element_by_xpath("//input[@value='Delete Project']").click()
+        wd.find_element_by_xpath("//input[@value='Delete Project']").click()
         self.project_cache = None
 
     def select_first_group(self):
@@ -58,21 +57,12 @@ class ProjectHelper:
         wd = self.app.wd
         wd.find_elements_by_name("selected[]")[index].click()
 
-    def open_projects_page(self):
-        wd = self.app.wd
-        if not (wd.current_url.endswith("/manage_proj_page.php") and
-                len(wd.find_elements_by_xpath("//input[@value='Create New "
-                                              "Project']")) > 0):
-            wd.find_element_by_link_text("manage").click()
-            wd.find_element_by_link_text("Manage Projects").click()
-
-    project_cache = None
-
     def get_project_list(self):
         if self.project_cache is None:
             wd = self.app.wd
-            self.app.session.open_manage_project_page()
+            self.open_project_page()
             self.project_cache = []
+            #project_list = []
             for row in wd.find_elements_by_xpath("//table[3]/*/tr[@class='row-1' or @class='row-2']"):
                 cells = row.find_elements_by_css_selector("td")
                 id = cells[0].find_element_by_css_selector("a").get_attribute("href").split("=")[-1]
@@ -81,6 +71,10 @@ class ProjectHelper:
                 enabled = cells[2].text
                 view_state = cells[3].text
                 description = cells[4].text
+                #project_list.append(Project(id=id, name=name,
+                # status=status,
+                # view_state=view_state,
+                # description=description))
                 self.project_cache.append(Project(id=id, name=name,
                                                   status=status,
                                                   view_state=view_state,
