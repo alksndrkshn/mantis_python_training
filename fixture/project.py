@@ -42,12 +42,13 @@ class ProjectHelper:
             Select(wd.find_element_by_name(list_name)).select_by_visible_text(
                 value)
 
-    def delete_project_by_name(self, project):
+    def delete_project_by_name(self, name):
         wd = self.app.wd
         self.open_project_page()
-        wd.find_element_by_xpath("//a[text()='%s']" % project.name).click()
+        wd.find_element_by_link_text(name).click()
         wd.find_element_by_xpath("//input[@value='Delete Project']").click()
         wd.find_element_by_xpath("//input[@value='Delete Project']").click()
+        wd.find_element_by_xpath("//*/text()[normalize-space(.)='']/parent::*").click()
         self.project_cache = None
 
     def select_first_group(self):
