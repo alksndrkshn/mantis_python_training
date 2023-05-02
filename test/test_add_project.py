@@ -9,7 +9,6 @@ def random_project(prefix, maxlen):
         random.randrange(maxlen))])
 
 def test_add_project(app):
-    app.session.login("administrator", "root")
     old_projects = app.soap.get_project_list()
     project = Project(name=random_project("name", 5), status="stable",
                       view_state="private",
